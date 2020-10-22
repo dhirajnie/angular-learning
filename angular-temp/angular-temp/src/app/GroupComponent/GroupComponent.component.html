@@ -1,0 +1,12 @@
+<!-- <div dynamicField [config]="config.config" [group]="group">
+
+</div>
+<div *ngFor="let field of config.sconfig" dynamicField [config]="field" [group]="group"
+></div> -->
+<div style="margin-left: 20px;">
+    <div>Group Component works </div>
+    <div dynamicField *ngFor="let item of nextLevelConfig" [config]="item">
+
+    </div>
+
+</div>>
