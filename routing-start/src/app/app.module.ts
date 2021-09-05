@@ -16,6 +16,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AuthService } from './auth.service';
 import { AuthGuardService } from './auth-guard.service';
 import { CanDeactivateGurad } from './servers/can-deactivate.service';
+import { ErrorPageComponent } from './error-page/error-page.component';
+import { ServerResolver } from './servers/server-resolver.service';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,7 +26,7 @@ const appRoutes: Routes = [
     // canActivate: [AuthGuardService],// this will prevent both parent child to load
     // canActivateChild: [AuthGuardService], // this will load the parent but prevent child to load 
     children: [{
-      path: ':id', component: ServerComponent,
+      path: ':id', component: ServerComponent, resolve: { server: ServerResolver }
     },
     { path: ':id/edit', component: EditServerComponent, canDeactivate: [CanDeactivateGurad] }
     ]
@@ -33,15 +35,19 @@ const appRoutes: Routes = [
     path: 'users', component: UsersComponent,
     children: [{ path: ':id/:name', component: UserComponent }]
   },
+  // {
+  //   path: 'not-found', component: PageNotFoundComponent
+  // },
+
   {
-    path: 'not-found', component: PageNotFoundComponent
+    path: 'not-found', component: ErrorPageComponent, data: { message: 'Page not found' }
   },
   {
     path: 'customer-dashboad', loadChildren: () => import('../../src/app/customer-dashboard/customer-dashboard.module').then(m => m.CustomerDashboardModule)
   },
-  // {
-  //   path: '**', redirectTo: 'not-found'
-  // }
+  {
+    path: '**', redirectTo: 'not-found'
+  }
 
 
 ];
@@ -55,14 +61,16 @@ const appRoutes: Routes = [
     UserComponent,
     EditServerComponent,
     ServerComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    ErrorPageComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [ServersService, AuthService, AuthGuardService],
+  providers: [ServersService, AuthService, AuthGuardService, CanDeactivateGurad,
+    ServerResolver],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -15,15 +15,23 @@ export class ServerComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.server = this.serversService.getServer(1);
-    console.log(this.route.snapshot);
-    console.log(this.route.queryParamMap)
-    this.route.queryParams.subscribe(params => {
-      console.log(params)
-      this.server = this.serversService.getServer(+this.route.snapshot.params['id']);
+    /**  
+     * Loading server data using resolver at router level
+     */
 
-      console.log(this.server)
-    })
+
+    this.route.data.subscribe((data)=>{ this.server= data['server']});
+
+    /** 2nd and NORMAL way to load data  */
+    // this.server = this.serversService.getServer(1);
+    // console.log(this.route.snapshot);
+    // console.log(this.route.queryParamMap)
+    // this.route.queryParams.subscribe(params => {
+    //   console.log(params)
+    //   this.server = this.serversService.getServer(+this.route.snapshot.params['id']);
+
+    //   console.log(this.server)
+    // })
   }
 
   onEdit() {
