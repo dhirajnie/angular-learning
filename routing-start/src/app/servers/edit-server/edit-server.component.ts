@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import { ServersService } from '../servers.service';
 
 @Component({
@@ -11,28 +10,31 @@ import { ServersService } from '../servers.service';
 export class EditServerComponent implements OnInit {
   server: { id: number, name: string, status: string };
   serverName = '';
-
   serverStatus = '';
   allowEdit: boolean;
+  changesSaved: boolean;
 
-  constructor(private serversService: ServersService, private route: ActivatedRoute) { }
+  constructor(private serversService: ServersService, private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit() {
-
-    // this.route.queryParams.subscribe(console.log);
-    // this.route.fragment.subscribe(console.log);
-    // this.route.queryParams.subscribe(console.log);
-
+    console.log('on edit component load')
     this.route.queryParams.subscribe(params => {
-      this.server = this.serversService.getServer(+params['id']);
-      this.allowEdit = params['allowEdit'] ? true : false;
-      this.serverName = this.server.name;
-      this.serverStatus = this.server.status;
-    })
+      this.allowEdit = params['allowEdit'] === 'true' ? true : false;
+      console.log(params)
+
+    });
+    this.server = this.serversService.getServer(+this.route.snapshot.params['id']);
+    console.log(this.server)
+
+    this.serverName = this.server?.name;
+    this.serverStatus = this.server?.status;
   }
 
   onUpdateServer() {
     this.serversService.updateServer(this.server.id, { name: this.serverName, status: this.serverStatus });
+    this.changesSaved = true;
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 
 }
